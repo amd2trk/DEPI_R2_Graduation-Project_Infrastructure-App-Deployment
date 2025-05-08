@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./FrontEnd
+      args:
+        # For local dev, point to the backend service on its Docker Compose port
+        REACT_APP_API_BASE_URL: http://backend:4000/api/v1/
+    ports:
+      - "3000:80" # Map host port 3000 to container port 80 (Nginx)
+    depends_on:
+      - backend
+    networks:
+      - goldenwings-net
+
+  backend:
+    build: ./BackEnd
+    ports:
+      - "4000:8080" # Map host port 4000 to container port 8080
+    environment:
+      # Use the service name 'mongo' for the database host
+      MONGO_DB_URL: mongodb://mongo:27017/goldenwingsdb # Replace 'goldenwingsdb' if needed
+      PORT: 8080 # Port the backend listens on inside the container
+      ALLOWED_ORIGINS: http://localhost:3000 # Allow frontend origin for local dev
+      NODE_ENV: development # Set appropriate env for local
+      # Add JWT_SECRET or other necessary backend vars here if needed
+      # JWT_SECRET: your_local_secret
+    depends_on:
+      - mongo
+    networks:
+      - goldenwings-net
+
+  mongo:
+    image: mongo:6.0 # Use a specific Mongo version
+    ports:
+      - "27017:27017" # Map host port 27017 to container port 27017
+    volumes:
+      - mongo-data:/data/db # Persist data locally
+    # Optional: Add environment variables for MongoDB authentication if needed locally
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: root
+    #   MONGO_INITDB_ROOT_PASSWORD: examplepassword
+    networks:
+      - goldenwings-net
+
+networks:
+  goldenwings-net:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local

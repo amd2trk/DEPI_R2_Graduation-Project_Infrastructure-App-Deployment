@@ -1,0 +1,16 @@
+.MuiButton-contained {
+  border-radius: 15px !important;
+  background-color: #1abc9c !important;
+}
+
+.MuiTextField{
+  border-radius: 50px !important;
+}
+
+.valid {
+  border: 1px solid green;
+}
+
+.invalid {
+  border: 1px solid red;
+}
