@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  # namespace: golden-wings # Optional: specify namespace
+spec:
+  selector:
+    app: backend
+  ports:
+    - protocol: TCP
+      port: 80 # Service port
+      targetPort: 8080 # Container port (from backend Dockerfile and ConfigMap)
+  type: ClusterIP # Internal service, access via frontend or Ingress
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  # namespace: golden-wings # Optional: specify namespace
+spec:
+  replicas: 2 # Example: start with 2 replicas
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: ahmed441565tarek/goldenwings-backend:v0.1.0 # <-- CHANGE THIS
+        ports:
+        - containerPort: 8080
+        envFrom:
+          - configMapRef:
+              name: backend-configmap
+          - secretRef:
+              name: mongo-secret # Includes MONGO_DB_URL and potentially JWT_SECRET
+        # Optional: Add readiness/liveness probes
+        # readinessProbe:
+        #   httpGet:
+        #     path: /healthz # Assuming you add a health check endpoint
+        #     port: 8080
+        #   initialDelaySeconds: 5
+        #   periodSeconds: 5
+        # livenessProbe:
+        #   httpGet:
+        #     path: /healthz
+        #     port: 8080
+        #   initialDelaySeconds: 15
+        #   periodSeconds: 20

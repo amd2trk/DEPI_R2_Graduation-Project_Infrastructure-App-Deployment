@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  # namespace: golden-wings # Optional: specify namespace
+spec:
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 80 # Exposed service port
+      targetPort: 80 # Container port (Nginx)
+  # Use LoadBalancer for cloud providers like AWS/GCP/Azure
+  # Use NodePort or Ingress for other environments
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+  # namespace: golden-wings # Optional: specify namespace
+spec:
+  replicas: 2 # Example: start with 2 replicas
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: your-dockerhub-username/goldenwings-frontend:latest # <-- CHANGE THIS
+        ports:
+        - containerPort: 80

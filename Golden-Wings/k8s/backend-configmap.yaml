@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-configmap
+  # namespace: golden-wings # Optional: specify namespace
+data:
+  PORT: "8080"
+  NODE_ENV: "production"
+  # Adjust this based on your deployed frontend URL(s) or Ingress setup
+  ALLOWED_ORIGINS: "http://localhost:3000"
