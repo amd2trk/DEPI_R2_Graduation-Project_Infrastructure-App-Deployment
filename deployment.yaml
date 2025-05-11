@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodeopsx-deployment
+  labels:
+    app: nodeopsx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodeopsx
+  template:
+    metadata:
+      labels:
+        app: nodeopsx
+    spec:
+      containers:
+      - name: nodeopsx-container
+        image: ahmedabualkhair/nodeopsx-app:latest
+        ports:
+        - containerPort: 3000
